@@ -35,7 +35,7 @@ map.enableScrollWheelZoom();
 
 // 编写自定义函数,创建标注
 	function addMarker(point){
-	var myIcon = new BMap.Icon("hongbao.png", new BMap.Size(24, 30));      //需要将hongbao.png放在同一个目录下
+	var myIcon = new BMap.Icon("./hongbao.png", new BMap.Size(24, 30));      //需要将hongbao.png放在同一个目录下
 	var marker = new BMap.Marker(point, {icon: myIcon});
 	  map.addOverlay(marker);
 	  marker.setAnimation(BMAP_ANIMATION_BOUNCE);//使创建的点跳动
