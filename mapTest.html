@@ -1,0 +1,125 @@
+<!DOCTYPE html>  
+<html>
+<head>  
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />  
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
+<title>MyMapTest</title>  
+<style type="text/css">  
+html{height:100%}  
+body{height:100%;margin:0px;padding:0px}  
+#container{height:100%}  
+</style>  
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=05cGPCWmuuX0vpj1BGT3wqd0WadyOolK">
+//v3.0版本的引用方式：src="http://api.map.baidu.com/api?v=3.0&ak=您的密钥"
+</script>
+</head>  
+ 
+<body>  
+<div id="container"></div> 
+<script type="text/javascript"> 
+// 创建地图实例  
+var map = new BMap.Map("container");
+// 创建点坐标 
+var point = new BMap.Point(116.404, 39.915);
+// 初始化地图，设置中心点坐标和地图级别 
+map.centerAndZoom(point, 15);
+//添加控件
+map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_BOTTOM_RIGHT, type: BMAP_NAVIGATION_CONTROL_LARGE})); 
+map.addControl(new BMap.ScaleControl());    
+//添加鼠标缩放
+map.enableScrollWheelZoom();
+
+//添加覆盖物（先创建点）
+//var marker = new BMap.Marker(new BMap.Point(116.404, 39.910)); // 创建点
+//map.addOverlay(marker); 
+
+// 编写自定义函数,创建标注
+	function addMarker(point){
+	var myIcon = new BMap.Icon("hongbao.png", new BMap.Size(24, 30));      //需要将hongbao.png放在同一个目录下
+	var marker = new BMap.Marker(point, {icon: myIcon});
+	  map.addOverlay(marker);
+	  marker.setAnimation(BMAP_ANIMATION_BOUNCE);//使创建的点跳动
+
+    //添加点击窗口事件（）
+	//窗口基本信息
+	var opts = {
+        width : 200,     // 信息窗口宽度
+        title : "海底捞王府井店"  // 信息窗口标题
+    }
+	//窗口信息的内容
+	var sContent =
+	"<h4 style='margin:0 0 5px 0;padding:0.2em 0'>海底捞王府井店到店领取9元现今红包</h4>" + 
+	"<img style='float:right;margin:4px' id='imgDemo' src='./test.jpg' width='104' height='104' title='火锅'/>" + 
+	"<p style='margin:0;line-height:1.5;font-size:13px;text-indent:2em'>地址：天安门坐落在中国北京市中心,故宫的南侧,与天安门广场隔长安街相望,是清朝皇城的大门...</p>" + 
+	"<input type='button' value='查看红包' onclick='getmoney()' style='background-color:#ffffff;border:1px solid #d65645;width:220px;height:38px;'/>"+  //利用button按钮跳转html页面
+	"</div>";
+
+	var infoWindow = new BMap.InfoWindow(sContent,opts);  // 创建信息窗口对象
+	marker.addEventListener("click", function(){          
+	   this.openInfoWindow(infoWindow);
+	   //图片加载完毕重绘infowindow
+	   document.getElementById('imgDemo').onload = function (){
+		   infoWindow.redraw();   //防止在网速较慢，图片未加载时，生成的信息框高度比图片的总高度小，导致图片部分被隐藏
+	   }
+	});
+	}
+
+	//添加button按钮跳转
+	function getmoney(){window.open("./查看红包.html")}
+
+// 随机向地图添加25个标注
+	var bounds = map.getBounds();
+	var sw = bounds.getSouthWest();
+	var ne = bounds.getNorthEast();
+	var lngSpan = Math.abs(sw.lng - ne.lng);
+	var latSpan = Math.abs(ne.lat - sw.lat);
+	for (var i = 0; i < 25; i ++) {
+		var point = new BMap.Point(sw.lng + lngSpan * (Math.random() * 0.7), ne.lat - latSpan * (Math.random() * 0.7));
+		addMarker(point);
+	}
+
+
+//创建矩形
+//var pStart = new BMap.Point(116.392214,39.918985);
+//var pEnd = new BMap.Point(116.41478,39.911901);
+//var rectangle = new BMap.Polygon([
+//		new BMap.Point(pStart.lng,pStart.lat),
+//		new BMap.Point(pEnd.lng,pStart.lat),
+//		new BMap.Point(pEnd.lng,pEnd.lat),
+//		new BMap.Point(pStart.lng,pEnd.lat)
+//	], {strokeColor:"blue", strokeWeight:2, strokeOpacity:0.5});  //创建矩形
+//map.addOverlay(rectangle); 
+
+//放置其他东西（图片之类的）
+	var pt = new BMap.Point(116.410, 39.910);
+	var myIcon = new BMap.Icon("http://lbsyun.baidu.com/jsdemo/img/fox.gif", new BMap.Size(300,157));
+	var marker2 = new BMap.Marker(pt,{icon:myIcon});  // 创建标注
+	map.addOverlay(marker2);              // 将标注添加到地图中
+//获取覆盖物信息
+//	marker2.addEventListener("click",getAttr);
+//	function getAttr(){
+	//	var p = marker2.getPosition();       //获取marker的位置
+	//	alert("marker2的位置是" + p.lng + " , " + p.lat);   
+	//}
+
+
+//添加图文信息窗口
+	var sContent =
+	"<h4 style='margin:0 0 5px 0;padding:0.2em 0'>天安门</h4>" + 
+	"<img style='float:right;margin:4px' id='imgDemo' src='./test.jpg' width='104' height='104' title='天安门'/>" + 
+	"<p style='margin:0;line-height:1.5;font-size:13px;text-indent:2em'>天安门坐落在中国北京市中心,故宫的南侧,与天安门广场隔长安街相望,是清朝皇城的大门...</p>" +
+	
+	"</div>";//窗口信息的内容
+
+	var infoWindow = new BMap.InfoWindow(sContent);  // 创建信息窗口对象
+	marker2.addEventListener("click", function(){          
+	   this.openInfoWindow(infoWindow);
+	   //图片加载完毕重绘infowindow
+	   document.getElementById('imgDemo').onload = function (){
+		   infoWindow.redraw();   //防止在网速较慢，图片未加载时，生成的信息框高度比图片的总高度小，导致图片部分被隐藏
+	   }
+	});
+
+</script>  
+</body>  
+</html>
